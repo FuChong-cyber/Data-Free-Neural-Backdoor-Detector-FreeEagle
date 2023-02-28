@@ -13,7 +13,7 @@ Use our backdoor detector to inpsect the above trained models, i.e., compute one
 
 The inspection results will be stored to .csv files.
 
-![image](https://github.com/FuChong-cyber/label-inference-attacks/blob/main/illustration_keep_predict_loss.png)
+![image](https://github.com/FuChong-cyber/Data-Free-Neural-Backdoor-Detector-FreeEagle/blob/main/MLBackdoorDetection/inspect_results/poisoned_gtsrb_google_net_class-agnostic_targeted%3D34_patched_img-trigger.png)
 
 ### Analyze the inspection results.
 Analyze the inspection results via *MLBackdoorDetection/analyze_result_csv.py*.
