@@ -43,6 +43,10 @@ root = 'D:/MyCodes/MLBackdoorDetection/saved_models'
 
 # generate paths of saved model files
 datasets = ['imagenet_subset', 'gtsrb', 'cifar10', 'mnist']
+
+dataset_re_ag_dict = {'imagenet_subset': 10, 'cifar10': 20, 'gtsrb': 5, 'mnist': 20}
+dataset_re_sp_dict = {'imagenet_subset': 3, 'cifar10': 8, 'gtsrb': 4, 'mnist': 8}
+
 dataset_arch_dict = {'imagenet_subset': 'resnet50', 'cifar10': 'vgg16', 'gtsrb': 'google_net', 'mnist': 'simple_cnn'}
 dataset_ncls_dict = {'imagenet_subset': 20, 'cifar10': 10, 'gtsrb': 43, 'mnist': 10}
 dataset_size_dict = {'imagenet_subset': 224, 'cifar10': 32, 'gtsrb': 32, 'mnist': 28}
@@ -88,6 +92,9 @@ opt = parse_option()
 
 # check poisoned models
 for dataset in datasets:
+    REPEAT_ROUNDS_AGNOSTIC = dataset_re_ag_dict[dataset]
+    REPEAT_ROUNDS_SPECIFIC = dataset_re_sp_dict[dataset]
+
     model_arch = dataset_arch_dict[dataset]
     _n_cls = dataset_ncls_dict[dataset]
     _size = dataset_size_dict[dataset]
@@ -95,54 +102,56 @@ for dataset in datasets:
     poisoned_dataset = f'poisoned_{dataset}'
     for trigger_type in trigger_types:
         # class agnostic backdoor
-        for targeted_class in range(_n_cls):
-            saved_agnostic_poisoned_model_file = \
-                f'{root}/{poisoned_dataset}_models/' \
-                f'{poisoned_dataset}_{model_arch}' \
-                f'_class-agnostic_targeted={targeted_class}' \
-                f'_{trigger_type}-trigger/last.pth'
-            try:
-                _anomaly_metric = _inspect_one_model(saved_agnostic_poisoned_model_file, model_arch, opt, _n_cls, _size,
-                                                     method=method_name)
-            except FileNotFoundError:
-                print(f'File not found.')
-                break
-            except RuntimeError:
-                print('Ckpt file corrupted.')
-                continue
-            _n_cls = dataset_ncls_dict[dataset]
-            backdoor_settings = ('agnostic', trigger_type, 'None', targeted_class)
-            df = save_to_df(df, _anomaly_metric, poisoned_dataset, _n_cls, backdoor_settings)
-            df.to_csv(f'results_{method_name}.csv', index=False)
+        for repeat_round_id in range(REPEAT_ROUNDS_AGNOSTIC):
+            for targeted_class in range(_n_cls):
+                saved_agnostic_poisoned_model_file = \
+                    f'{root}/{poisoned_dataset}_models/' \
+                    f'{poisoned_dataset}_{model_arch}' \
+                    f'_class-agnostic_targeted={targeted_class}' \
+                    f'_{trigger_type}-trigger/last_{repeat_round_id}.pth'
+                try:
+                    _anomaly_metric = _inspect_one_model(saved_agnostic_poisoned_model_file, model_arch, opt, _n_cls, _size,
+                                                         method=method_name)
+                except FileNotFoundError:
+                    print(f'File not found.')
+                    break
+                except RuntimeError:
+                    print('Ckpt file corrupted.')
+                    continue
+                _n_cls = dataset_ncls_dict[dataset]
+                backdoor_settings = ('agnostic', trigger_type, 'None', targeted_class)
+                df = save_to_df(df, _anomaly_metric, poisoned_dataset, _n_cls, backdoor_settings)
+                df.to_csv(f'results_{method_name}.csv', index=False)
         # class specific backdoor
-        _specific_backdoor_targeted_classes = dataset_specific_backdoor_targeted_classes_dict[dataset]
-        for _specific_backdoor_targeted_class in _specific_backdoor_targeted_classes:
-            for _source_class in range(_n_cls):
-                if _source_class != _specific_backdoor_targeted_class:
-                    saved_specific_poisoned_model_file = \
-                        f'{root}/{poisoned_dataset}_models/' \
-                        f'{poisoned_dataset}_{model_arch}' \
-                        f'_class-specific_targeted={_specific_backdoor_targeted_class}_sources=[{_source_class}]' \
-                        f'_{trigger_type}-trigger/last.pth'
-                    try:
-                        _anomaly_metric = _inspect_one_model(saved_specific_poisoned_model_file, model_arch, opt,
-                                                             _n_cls, _size,
-                                                             method=method_name)
-                    except FileNotFoundError:
-                        print(f'File not found.')
-                        break
-                    except RuntimeError:
-                        print('Ckpt file corrupted.')
-                        continue
-                    _n_cls = dataset_ncls_dict[dataset]
-                    backdoor_settings = ('specific', trigger_type, _source_class, _specific_backdoor_targeted_class)
-                    df = save_to_df(df, _anomaly_metric, poisoned_dataset, _n_cls, backdoor_settings)
-                    df.to_csv(f'results_{method_name}.csv', index=False)
+        for repeat_round_id in range(REPEAT_ROUNDS_SPECIFIC):
+            _specific_backdoor_targeted_classes = dataset_specific_backdoor_targeted_classes_dict[dataset]
+            for _specific_backdoor_targeted_class in _specific_backdoor_targeted_classes:
+                for _source_class in range(_n_cls):
+                    if _source_class != _specific_backdoor_targeted_class:
+                        saved_specific_poisoned_model_file = \
+                            f'{root}/{poisoned_dataset}_models/' \
+                            f'{poisoned_dataset}_{model_arch}' \
+                            f'_class-specific_targeted={_specific_backdoor_targeted_class}_sources=[{_source_class}]' \
+                            f'_{trigger_type}-trigger/last_{repeat_round_id}.pth'
+                        try:
+                            _anomaly_metric = _inspect_one_model(saved_specific_poisoned_model_file, model_arch, opt,
+                                                                 _n_cls, _size,
+                                                                 method=method_name)
+                        except FileNotFoundError:
+                            print(f'File not found.')
+                            break
+                        except RuntimeError:
+                            print('Ckpt file corrupted.')
+                            continue
+                        _n_cls = dataset_ncls_dict[dataset]
+                        backdoor_settings = ('specific', trigger_type, _source_class, _specific_backdoor_targeted_class)
+                        df = save_to_df(df, _anomaly_metric, poisoned_dataset, _n_cls, backdoor_settings)
+                        df.to_csv(f'results_{method_name}.csv', index=False)
 
 
 # inspect poisoned models trojaned with the natural-trigger backdoor
-NATURAL_MODEL_NUM = 80
-COMPOSITE_MODEL_NUM_PER = 30
+NATURAL_MODEL_NUM = 200
+COMPOSITE_MODEL_NUM_PER = 65
 for natural_backdoor_model_id in range(1, NATURAL_MODEL_NUM):
     saved_specific_poisoned_model_file = \
         f'{root}/poisoned_imagenet_subset_models/' \
