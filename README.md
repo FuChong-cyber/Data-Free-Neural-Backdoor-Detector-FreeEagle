@@ -1,4 +1,5 @@
 # Data-Free-Neural-Backdoor-Detector-FreeEagle
+Code of the paper *FreeEagle: Detecting Complex Neural Trojans in Data-Free Cases* on Usenix Security 2023.
 A data-free backdoor detector for deep neural networks.
 
 ## Quick Start
