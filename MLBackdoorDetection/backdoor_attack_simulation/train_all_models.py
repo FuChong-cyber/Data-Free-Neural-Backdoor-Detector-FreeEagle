@@ -10,6 +10,10 @@ opt = parse_option()
 
 # generate paths of saved model files
 datasets = ['mnist', 'imagenet_subset', 'gtsrb', 'cifar10']
+
+dataset_re_ag_dict = {'imagenet_subset': 10, 'cifar10': 20, 'gtsrb': 5, 'mnist': 20}
+dataset_re_sp_dict = {'imagenet_subset': 3, 'cifar10': 8, 'gtsrb': 4, 'mnist': 8}
+
 dataset_arch_dict = {'imagenet_subset': 'resnet50', 'cifar10': 'vgg16', 'gtsrb': 'google_net', 'mnist': 'simple_cnn'}
 dataset_ncls_dict = {'imagenet_subset': 20, 'cifar10': 10, 'gtsrb': 43, 'mnist': 10}
 dataset_size_dict = {'imagenet_subset': 224, 'cifar10': 32, 'gtsrb': 32, 'mnist': 28}
@@ -49,7 +53,7 @@ for dataset in datasets:
         if os.path.exists(saved_model_file):
             existing_benign_model_num += 1
 
-    set_benign_model_num = 100
+    set_benign_model_num = 200
     while existing_benign_model_num < set_benign_model_num:
         command_str = f'python model_training.py ' \
                       f'--dataset {dataset} ' \
@@ -61,6 +65,8 @@ for dataset in datasets:
 
 # train poisoned models
 for dataset in datasets:
+    REPEAT_ROUNDS_AGNOSTIC = dataset_re_ag_dict[dataset]
+    REPEAT_ROUNDS_SPECIFIC = dataset_re_sp_dict[dataset]
     model_arch = dataset_arch_dict[dataset]
     _n_cls = dataset_ncls_dict[dataset]
     _size = dataset_size_dict[dataset]
@@ -71,31 +77,35 @@ for dataset in datasets:
     poisoned_dataset = f'poisoned_{dataset}'
     for trigger_type in trigger_types:
         # class agnostic backdoor
-        for targeted_class in range(_n_cls):
-            command_str = f'python model_training.py ' \
-                          f'--dataset {poisoned_dataset} ' \
-                          f'--model {model_arch} ' \
-                          f'--data_folder {_root} ' \
-                          f'--targeted_class {targeted_class} ' \
-                          f'--trigger_type {trigger_type}'
-            train_process_status = os.system(command_str)
-            print(f'Training status exited with status: {train_process_status}.\n')
+        for repeat_round_id in range(REPEAT_ROUNDS_AGNOSTIC):
+            for targeted_class in range(_n_cls):
+                command_str = f'python model_training.py ' \
+                              f'--dataset {poisoned_dataset} ' \
+                              f'--model {model_arch} ' \
+                              f'--data_folder {_root} ' \
+                              f'--targeted_class {targeted_class} ' \
+                              f'--trigger_type {trigger_type} ' \
+                              f'--my_marker {repeat_round_id}'
+                train_process_status = os.system(command_str)
+                print(f'Training status exited with status: {train_process_status}.\n')
 
         # class specific backdoor
-        _specific_backdoor_targeted_classes = dataset_specific_backdoor_targeted_classes_dict[dataset]
-        for _specific_backdoor_targeted_class in _specific_backdoor_targeted_classes:
-            for _source_class in range(_n_cls):
-                if _source_class != _specific_backdoor_targeted_class:
-                    command_str = f'python model_training.py ' \
-                                  f'--dataset {poisoned_dataset} ' \
-                                  f'--model {model_arch} ' \
-                                  f'--data_folder {_root} ' \
-                                  f'--targeted_class {_specific_backdoor_targeted_class} ' \
-                                  f'--source_classes {_source_class} ' \
-                                  f'--poison_ratio {_poison_ratio_specific} ' \
-                                  f'--trigger_type {trigger_type}'
-                    train_process_status = os.system(command_str)
-                    print(f'Training status exited with status: {train_process_status}.\n')
+        for repeat_round_id in range(REPEAT_ROUNDS_SPECIFIC):
+            _specific_backdoor_targeted_classes = dataset_specific_backdoor_targeted_classes_dict[dataset]
+            for _specific_backdoor_targeted_class in _specific_backdoor_targeted_classes:
+                for _source_class in range(_n_cls):
+                    if _source_class != _specific_backdoor_targeted_class:
+                        command_str = f'python model_training.py ' \
+                                      f'--dataset {poisoned_dataset} ' \
+                                      f'--model {model_arch} ' \
+                                      f'--data_folder {_root} ' \
+                                      f'--targeted_class {_specific_backdoor_targeted_class} ' \
+                                      f'--source_classes {_source_class} ' \
+                                      f'--poison_ratio {_poison_ratio_specific} ' \
+                                      f'--trigger_type {trigger_type} ' \
+                                      f'--my_marker {repeat_round_id}'
+                        train_process_status = os.system(command_str)
+                        print(f'Training status exited with status: {train_process_status}.\n')
 
 # train models trojaned with the natural-trigger backdoor
 for _ in range(80):
