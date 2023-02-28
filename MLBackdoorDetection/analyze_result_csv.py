@@ -4,7 +4,6 @@ import pandas as pd
 from sklearn.metrics import roc_curve, auc, confusion_matrix
 import numpy as np
 
-# FreeEagle
 method_name = 'FreeEagle'
 test_adaptive = False
 Ldef = 2
