@@ -13,13 +13,7 @@ Use our backdoor detector to inpsect the above trained models, i.e., compute one
 
 The inspection results will be stored to .csv files.
 
-<img src=https://github.com/FuChong-cyber/Data-Free-Neural-Backdoor-Detector-FreeEagle/blob/main/MLBackdoorDetection/inspect_results/poisoned_gtsrb_google_net_class-agnostic_targeted%3D34_patched_img-trigger.png width=350 height=400 />
-
-<img src=https://github.com/FuChong-cyber/Data-Free-Neural-Backdoor-Detector-FreeEagle/blob/main/MLBackdoorDetection/inspect_results/poisoned_gtsrb_google_net_class-specific_targeted%3D8_sources%3D%5B24%5D_patched_img-trigger.png width=350 height=400 />
-
-<img src=https://github.com/FuChong-cyber/Data-Free-Neural-Backdoor-Detector-FreeEagle/blob/main/MLBackdoorDetection/inspect_results/poisoned_imagenet_subset_resnet50_class-agnostic_targeted%3D6_patched_img-trigger.png width=350 height=400 />
-
-<img src=https://github.com/FuChong-cyber/Data-Free-Neural-Backdoor-Detector-FreeEagle/blob/main/MLBackdoorDetection/inspect_results/poisoned_imagenet_subset_resnet50_class-specific_targeted%3D18_sources%3D%5B13%5D_patched_img-trigger.png width=350 height=400 />
+<img src=https://github.com/FuChong-cyber/Data-Free-Neural-Backdoor-Detector-FreeEagle/blob/main/MLBackdoorDetection/inspect_results/poisoned_gtsrb_google_net_class-agnostic_targeted%3D34_patched_img-trigger.png width=350 height=400 /><img src=https://github.com/FuChong-cyber/Data-Free-Neural-Backdoor-Detector-FreeEagle/blob/main/MLBackdoorDetection/inspect_results/poisoned_gtsrb_google_net_class-specific_targeted%3D8_sources%3D%5B24%5D_patched_img-trigger.png width=350 height=400 /><img src=https://github.com/FuChong-cyber/Data-Free-Neural-Backdoor-Detector-FreeEagle/blob/main/MLBackdoorDetection/inspect_results/poisoned_imagenet_subset_resnet50_class-agnostic_targeted%3D6_patched_img-trigger.png width=350 height=400 /><img src=https://github.com/FuChong-cyber/Data-Free-Neural-Backdoor-Detector-FreeEagle/blob/main/MLBackdoorDetection/inspect_results/poisoned_imagenet_subset_resnet50_class-specific_targeted%3D18_sources%3D%5B13%5D_patched_img-trigger.png width=350 height=400 />
 
 ### Analyze the inspection results.
 Analyze the inspection results via *MLBackdoorDetection/analyze_result_csv.py*.
