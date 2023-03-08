@@ -12,7 +12,7 @@ To train models trojaned with the composite backdoor, you can use the implementa
 ### Inspect the trained trojaned and benign models.
 Use *MLBackdoorDetection/inspect_multiple_models.py* to inpsect the above trained models, i.e., compute one anomaly metric value and generate one inspection result image for each model. Here are some examples of inspection result image of trojaned models, with the abnormal class pairs highlighted in yellow.
 
-If you want to inspect one single model, use backdoor_inspection_new.py
+If you want to inspect one single model, use *MLBackdoorDetection/backdoor_inspection_new.py*
 
 The inspection results will be stored to .csv files in the root path. Generated images will be saved at *./inspect_results*.
 
