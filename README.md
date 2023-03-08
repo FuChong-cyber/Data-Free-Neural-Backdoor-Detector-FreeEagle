@@ -20,5 +20,5 @@ The inspection results will be stored to .csv files in the root path. Generated 
 
 ### Analyze the inspection results.
 Analyze the inspection results via *MLBackdoorDetection/analyze_result_csv.py*.
-Manual configuration is needed, e.g., setting the variable *original_dataset_name* to *gtsrb* if you want to check the defense performance on the GTSRB dataset.
+Manual configuration is needed, e.g., setting the variable *original_dataset_name* to *gtsrb* if you want to check the defense performance on the GTSRB dataset. If one param is not specified, the result will computed on the overall setting. For example, if *original_dataset_name* is *None*, then the result will be computed on all the datasets.
 
