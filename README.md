@@ -12,6 +12,8 @@ To train models trojaned with the composite backdoor, you can use the implementa
 ### Inspect the trained trojaned and benign models.
 Use *MLBackdoorDetection/inspect_multiple_models.py* to inpsect the above trained models, i.e., compute one anomaly metric value and generate one inspection result image for each model. Here are some examples of inspection result image of trojaned models, with the abnormal class pairs highlighted in yellow.
 
+If you want to inspect one single model, use backdoor_inspection_new.py
+
 The inspection results will be stored to .csv files in the root path. Generated images will be saved at *./inspect_results*.
 
 <img src=https://github.com/FuChong-cyber/Data-Free-Neural-Backdoor-Detector-FreeEagle/blob/main/MLBackdoorDetection/inspect_results/poisoned_gtsrb_google_net_class-agnostic_targeted%3D34_patched_img-trigger.png width=350 height=400 /><img src=https://github.com/FuChong-cyber/Data-Free-Neural-Backdoor-Detector-FreeEagle/blob/main/MLBackdoorDetection/inspect_results/poisoned_gtsrb_google_net_class-specific_targeted%3D8_sources%3D%5B24%5D_patched_img-trigger.png width=350 height=400 /><img src=https://github.com/FuChong-cyber/Data-Free-Neural-Backdoor-Detector-FreeEagle/blob/main/MLBackdoorDetection/inspect_results/poisoned_imagenet_subset_resnet50_class-agnostic_targeted%3D6_patched_img-trigger.png width=350 height=400 /><img src=https://github.com/FuChong-cyber/Data-Free-Neural-Backdoor-Detector-FreeEagle/blob/main/MLBackdoorDetection/inspect_results/poisoned_imagenet_subset_resnet50_class-specific_targeted%3D18_sources%3D%5B13%5D_patched_img-trigger.png width=350 height=400 />
